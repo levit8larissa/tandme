@@ -1,0 +1,49 @@
+from turtle import Turtle, Screen
+import pandas
+from score import Score
+
+screen = Screen()
+screen.title("U.S. States Game")
+image = "blank_states_img.gif"
+screen.addshape(image)
+screen.setup(width=750, height=550)
+turtle = Turtle()
+turtle.shape(image)
+state_writer = Turtle()
+state_writer.hideturtle()
+state_writer.penup()
+score = Score()
+game_is_on = True
+
+df = pandas.read_csv("50_states.csv")
+state_list = df.state.to_list()
+guessed_states = []
+
+while game_is_on:
+    answer_state = screen.textinput("", "Name a state or type 'show' to see remaining states").title()
+    score.update_score()
+
+    if answer_state == "Show":
+
+				not_guessed_states = [state for state in state_list if state not in guessed_states]
+
+        for show in not_guessed_states:
+            show_row = df[df.state == show]
+            state_writer.goto(int(show_row.x), int(show_row.y))
+            state_writer.write(f"{show_row.state.item()}", align="center", font=("Arial", 7, "normal"))
+        screen.textinput("", "Choose 'ok' to try again or 'cancel' if finished")
+        state_writer.clear()
+        score.clear_score()
+
+    if answer_state in state_list:
+        guessed_states.append(answer_state)
+        state_row = df[df.state == answer_state]
+        state_writer.goto(int(state_row.x), int(state_row.y))
+        state_writer.write(f"{answer_state}", align="center", font=("Arial", 7, "normal"))
+        score.correct_answer()
+
+    if len(guessed_states) == 50:
+        score.win_game()
+        state_writer.clear()
+        screen.textinput("", "Choose 'ok' to try again or 'cancel' if finished")
+        score.clear_score()
