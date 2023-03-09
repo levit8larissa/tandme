@@ -25,7 +25,7 @@ while game_is_on:
 
     if answer_state == "Show":
 
-				not_guessed_states = [state for state in state_list if state not in guessed_states]
+	not_guessed_states = [state for state in state_list if state not in guessed_states]
 
         for show in not_guessed_states:
             show_row = df[df.state == show]
